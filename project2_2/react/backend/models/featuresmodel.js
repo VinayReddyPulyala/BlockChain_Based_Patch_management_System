@@ -8,14 +8,6 @@ const featureSchema = new mongoose.Schema({
     featuredescription : {
         type : String,
         required : true,
-    },
-    featurepriority : {
-        type : Number,
-        default : 0,
-    },
-    featurestatus : {
-        type : Number,
-        default : 0,
     }
 });
 module.exports =  mongoose.model("features",featureSchema);

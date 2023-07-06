@@ -8,14 +8,6 @@ const bugSchema = new mongoose.Schema({
     bugdesc : {
         type : String,
         required : true
-    },
-    bugpriority : {
-        type : Number,
-        default : 0
-    },
-    bugstatus : {
-        type : Number,
-        default : 0
     }
 })
 module.exports = mongoose.model("bugs",bugSchema);

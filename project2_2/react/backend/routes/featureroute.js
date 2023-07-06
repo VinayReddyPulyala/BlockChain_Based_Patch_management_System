@@ -15,7 +15,14 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
     try {
-        await featuremodel.insertMany(req.body);
+        let features = [];
+        for(let i of req.body.features){
+            features.push({
+                "software" : req.body.software,
+                "featuredescription" : i
+            });
+        }
+        await featuremodel.insertMany(features);
         res.status(200).send("Successfully Uploaded");
     }
     catch (error) {

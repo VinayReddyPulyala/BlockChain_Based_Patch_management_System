@@ -1,25 +1,67 @@
-import React, { useRef } from 'react'
-
+import React, { useRef, useState } from 'react'
+import ReactDOM from 'react-dom';
+import Axios from "axios";
+import useAuth from '../useAuth';
 function Report() {
     let bugref = useRef(null);
     let featureref = useRef(null);
+    let [software,setSoftware] = useState("");
+    
     function addbug() {
-        let bug = React.createElement("div", { className: "mb-2" }, React.createElement("textarea", { className: "form-control bugdesc", cols: "30", rows: "2" }));
-        bugref.current.appendChild(bug);
+        const bugElement = (
+            <div className="mb-2">
+                <textarea className="form-control bugdesc" cols="30" rows="2" />
+            </div>
+        );
+        const bugNode = ReactDOM.render(bugElement, document.createElement('div'));
+        bugref.current.appendChild(bugNode);
     }
+
     function addfeature() {
-        let feature = (<div className="mb-2">
-            <textarea className="form-control featuredesc" cols="30" rows="2"></textarea>
-        </div>)
-        featureref.current.appendChild(feature);
+        const featureElement = (
+            <div className="mb-2">
+                <textarea className="form-control featuredesc" cols="30" rows="2" />
+            </div>
+        );
+        const featureNode = ReactDOM.render(featureElement, document.createElement('div'));
+        featureref.current.appendChild(featureNode);
     }
+    async function handlereport(){
+        let bugs = (Array.from(document.querySelectorAll(".bugdesc"), (val) => val.value)).filter((val) => {
+            let re = /[a-zA-Z0-9]/;
+            return re.test(val);
+        });
+        let features = (Array.from(document.querySelectorAll(".featuredesc"), (val) => val.value)).filter((val) => {
+            let re = /[a-zA-Z0-9]/;
+            return re.test(val);
+        });
+        console.log(software,bugs,features);
+        try{
+
+            await Axios.post("http://localhost:8800/bugs",{
+                    "software" : software,
+                    "bugs" : bugs
+                });
+            await Axios.post("http://localhost:8800/features",{
+                    "software" : software,
+                    "features" : features
+                });
+                alert("Successfully uploaded ! Thank you for your report");
+        }catch(err){
+            alert(`Error while submitting report `);
+        }
+        window.location.reload();
+    }
+
     return (
         <div className="col-8 mx-auto my-5">
             <form>
                 <div className="row mb-3">
                     <label className="col-sm-4 col-form-label" htmlFor="Software">Software</label>
                     <div className="col-sm col-sm-6">
-                        <select id="Software" className="form-select" defaultValue="Software" aria-label="Default select example">
+                        <select id="Software" className="form-select" defaultValue="Software" aria-label="Default select example" onChange={(event)=>{
+                            setSoftware(event.target.value);
+                        }}>
                             <option disabled>Software</option>
                             <option value="Software1">Software_1</option>
                             <option value="Software2">Software_2</option>
@@ -51,7 +93,7 @@ function Report() {
                             Feature</button>
                     </div>
                 </div>
-                <button type="button" className="btn btn-primary" >
+                <button type="button" className="btn btn-primary" onClick={handlereport}>
                     Report
                 </button>
             </form>

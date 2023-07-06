@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { useContext } from 'react';
-import AdminContext from './createcontext';
+import context from '../../context';
 import 'jquery/dist/jquery.min.js';
 import "datatables.net-dt/js/dataTables.dataTables"
 import "datatables.net-dt/css/jquery.dataTables.min.css"
 import $ from 'jquery';
+import AccountContext from '../AccountContext';
+import useAuth from '../useAuth';
+
 function AdminPatches() {
-    let { contract, Account } = useContext(AdminContext);
+    const { contract } = useContext(context);
+    let { Account } = useContext(AccountContext);
     let [Patches, setPatches] = useState([]);
+    
     useEffect(() => {
         async function fun() {
             if (contract.methods !== undefined) {
@@ -34,6 +39,7 @@ function AdminPatches() {
                             <th>Software</th>
                             <th>Version</th>
                             <th>Features</th>
+                            <th>Bug Fixes</th>
                             <th>timestamp</th>
                             <th>Verification Status</th>
                             <th>Deploy Status</th>
@@ -47,7 +53,8 @@ function AdminPatches() {
                                     <td>{val.patchname}</td>
                                     <td>{val.software}</td>
                                     <td>{val.version}</td>
-                                    <td>{val.patchfeatures.split("</br>")[0]} <br /> {val.patchfeatures.split("</br>")[1]} </td>
+                                    <td>{val.patchfeatures} </td>
+                                    <td>{val.bugfixes} </td>
                                     <td>{new Date(val.timestamp * 1000).toLocaleString()}</td>
                                     <td>{val.verifystatus}</td>
                                     <td>{val.deploystatus}</td>

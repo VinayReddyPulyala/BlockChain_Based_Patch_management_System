@@ -3,11 +3,20 @@ const express = require("express");
 const dotenv = require("dotenv");
 const bugsroute = require("./routes/bugsroute");
 const featureroute = require("./routes/featureroute");
+const userroute = require("./routes/userroute");
+const downloadsroute  = require("./routes/downloadsroute");
 const cors = require("cors");
-dotenv.config();
+const cookieParser = require("cookie-parser");
+const txroute = require("./routes/txroute");
+const clientroute = require("./routes/clientroute");
+dotenv.config({path:"../.env"});
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    credentials : true,
+    origin : "http://localhost:3000"
+}));
+
 let mongooseconnect = async ()=>{
     try{
         await mongoose.connect(process.env.mongo, {
@@ -20,12 +29,20 @@ let mongooseconnect = async ()=>{
         console.log(error);
     }
 }
+
 app.listen(8800,()=>{
     mongooseconnect();
     console.log("This is an API");
 })
+
+app.use("/",userroute);
 app.use("/bugs",bugsroute);
 app.use("/features",featureroute);
+app.use("/txhistory",txroute);
+app.use("/downloadhistory",downloadsroute);
+app.use("/getclient",clientroute);
+app.use(cookieParser());
+
 app.get('/', (req, res) => {
     res.send("<strong>This is the API we use!!!<strong>");
 });
