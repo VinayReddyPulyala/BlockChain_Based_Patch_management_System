@@ -17,7 +17,7 @@ function DeveloperRequests() {
       if (contract.methods !== undefined) {
         let reqsts = await contract.methods.adminrequests().call();
         reqsts = reqsts.filter((val, ind) => {
-          return val.status !== "resolved";
+          return val.status === "Sent to Development";
         });
         reqsts.reverse();
         setRequests(reqsts);

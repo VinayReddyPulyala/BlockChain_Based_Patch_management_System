@@ -536,6 +536,26 @@ async function set() {
           "internalType": "uint256",
           "name": "version",
           "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "reqno",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "software",
+          "type": "string"
+        },
+        {
+          "internalType": "string[]",
+          "name": "bugnames",
+          "type": "string[]"
+        },
+        {
+          "internalType": "string[]",
+          "name": "featurenames",
+          "type": "string[]"
         }
       ],
       "name": "Accept",
@@ -553,6 +573,16 @@ async function set() {
         {
           "internalType": "uint256",
           "name": "version",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "message",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "reqno",
           "type": "uint256"
         }
       ],
@@ -660,6 +690,11 @@ async function set() {
           "internalType": "uint256",
           "name": "prev_version",
           "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "reqno",
+          "type": "uint256"
         }
       ],
       "name": "addPatchandUpdateReuploadStatus",
@@ -722,6 +757,11 @@ async function set() {
         {
           "internalType": "uint256",
           "name": "version",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "reqno",
           "type": "uint256"
         }
       ],
@@ -805,6 +845,16 @@ async function set() {
             {
               "internalType": "uint256",
               "name": "reuploaded",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "rejectmessage",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "reqno",
               "type": "uint256"
             }
           ],
@@ -1076,7 +1126,7 @@ async function set() {
     }
   ];
   // let address = "0xcFf4D5e7d63e981557cc6cECd5Fa775cCbfb9557";
-  let address = "0x66325DC51b97309C6d73d5D50f72CDBA046f9Aa4";
+  let address = "0xEd346d4698b99B1332478bD705F546D8F24FcF37";
   let contractobj = new web3.eth.Contract(abi, address);
   root.render(
       <context.Provider value={{ contract: contractobj }}>

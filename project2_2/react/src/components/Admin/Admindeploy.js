@@ -9,17 +9,18 @@ import $ from 'jquery';
 import Web3 from 'web3';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Bugfeaturedesc from '../Bugfeaturedesc';
 function Admindeploy() {
     const { contract } = useContext(context);
     let [Patches, setPatches] = useState([]);
     let { Account } = useContext(AccountContext);
+    let [bugs,setBugs] = useState([]);
+    let [features,setFeatures] = useState([]);
+    let [software,setsoftware] = useState("");
     let Navigate = useNavigate();
     useEffect(() => {
 
         async function fun() {
-            const web3 = new Web3(window.ethereum);
-            let res = await web3.eth.getTransaction("0x54c7d483a43da0936e00659b35b3f562ae7303b40dabdd88aee11ef063feeb85");
-            console.log(res);
             if (contract.methods !== undefined) {
                 console.log(contract);
                 let pchhashes = await contract.methods.getpatchhash().call();
@@ -38,7 +39,7 @@ function Admindeploy() {
         fun();
     }, [contract]);
     console.log(Account);
-    async function handledeploychange(name, version) {
+    async function handledeploychange(name, version,reqno) {
         try {
             let res = await contract.methods.deploy(name, version).send({ from: Account });
             document.getElementById("tx").innerHTML = `Successfully Deployed, Your Transaction Hash : ${res.transactionHash}`;
@@ -87,46 +88,63 @@ function Admindeploy() {
     }
     if (Patches.length !== 0) {
         return (
-            <div className="container my-5 table-responsive col-11 mx-auto" id="patchdpl">
-                <table className="table table-striped table-borderless" id="tableId">
-                    <thead>
-                        <tr>
-                            <th>S.No</th>
-                            <th>Patch_Name</th>
-                            <th>Software</th>
-                            <th>Features</th>
-                            <th>timestamp</th>
-                            <th>Verification Status</th>
-                            <th>Deploy Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {Patches.map((val, ind) => {
-                            return (
-                                <tr key={ind}>
-                                    <td>{ind + 1}</td>
-                                    <td>{val.patchname}</td>
-                                    <td>{val.software}</td>
-                                    <td>{val.patchfeatures.split("</br>")[0]} <br /> {val.patchfeatures.split("</br>")[1]} </td>
-                                    <td>{new Date(val.timestamp * 1000).toLocaleString()}</td>
-                                    <td>{val.verifystatus}</td>
-                                    <td>
-                                        {(() => {
-                                            if (val.deploystatus === "Deployed") {
-                                                return "Deployed";
-                                            } else {
-                                                return <button className="btn btn-primary" onClick={() => {
-                                                    handledeploychange(val.patchname, val.version);
-                                                }}>Deploy</button>;
-                                            }
-                                        })()}
-                                    </td>
-                                </tr>
-                            )
-                        })}
-                    </tbody>
-                </table>
-            </div>
+            <>
+            <Bugfeaturedesc bugs={bugs} features={features} software={software}/>
+                <div className="container my-5 table-responsive col-11 mx-auto" id="patchdpl">
+                    <table className="table table-striped table-borderless" id="tableId">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Patch_Name</th>
+                                <th>Software</th>
+                                <th>bugFixes</th>
+                                <th>Features</th>
+                                <th>timestamp</th>
+                                <th>Verification Status</th>
+                                <th>Deploy Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {Patches.map((val, ind) => {
+                                return (
+                                    <tr key={ind}>
+                                        <td>{ind + 1}</td>
+                                        <td>{val.patchname}
+                                            <span title="click to get the description" data-bs-toggle="modal"
+                                                data-bs-target="#exampleModal1" onClick={async () => {
+                                                    setBugs(val.bugfixes.split(", "));
+                                                    setFeatures(val.patchfeatures.split(", "));
+                                                    setsoftware(val.software);
+                                                }}>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" className="bi bi-info-circle ms-2" viewBox="0 0 16 16" >
+                                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                                    <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+                                                </svg>
+                                            </span>
+                                        </td>
+                                        <td>{val.software}</td>
+                                        <td>{val.bugfixes}</td>
+                                        <td>{val.patchfeatures.split("</br>")[0]} <br /> {val.patchfeatures.split("</br>")[1]} </td>
+                                        <td>{new Date(val.timestamp * 1000).toLocaleString()}</td>
+                                        <td>{val.verifystatus}</td>
+                                        <td>
+                                            {(() => {
+                                                if (val.deploystatus === "Deployed") {
+                                                    return "Deployed";
+                                                } else {
+                                                    return <button className="btn btn-primary" onClick={() => {
+                                                        handledeploychange(val.patchname, val.version,val.reqno);
+                                                    }}>Deploy</button>;
+                                                }
+                                            })()}
+                                        </td>
+                                    </tr>
+                                )
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            </>
         )
     }
     else {

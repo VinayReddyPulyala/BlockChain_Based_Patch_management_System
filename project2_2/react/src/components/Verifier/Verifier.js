@@ -34,7 +34,7 @@ function Verifier() {
                     </ul>
                 </div>
             </nav>
-            <div className="container border border-secondary p-3" id="cards">
+            <div className="container border border-secondary p-3 overflow-y-auto" style={{height:"550px"}}>
                 <AccountContext.Provider value={{ Account: Account }}>
                     <Outlet />
                 </AccountContext.Provider>

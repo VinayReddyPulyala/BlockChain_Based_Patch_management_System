@@ -19,7 +19,7 @@ function End_User() {
                     </ul>
                 </div>
             </nav>
-            <div className="border border-secondary">
+            <div className="border border-secondary overflow-y-auto" style={{height:"550px"}}>
                 <Outlet />
             </div>
         </div>

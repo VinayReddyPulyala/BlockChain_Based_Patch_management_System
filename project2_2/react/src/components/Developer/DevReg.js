@@ -11,7 +11,6 @@ function DevReg() {
   let [Patchno, setPatchno] = useState(0);
   let [file, setFile] = useState([]);
   let [patchname, setPatchname] = useState("");
-  let [progress,setProgress] = useState(0);
   const location = useLocation();
   let Navigate = useNavigate();
 
@@ -33,11 +32,7 @@ function DevReg() {
     event.preventDefault();
     console.log(file);
     let client = new Web3Storage({ token: process.env.REACT_APP_apikey });
-    const { cid } = await client.putWithProgress(file, {
-      onProgress: (progress) => {
-        setProgress(progress * 100);
-      },
-    });
+    let cid = await client.put(file);
     console.log(cid);
     try {
       let res;
@@ -45,7 +40,7 @@ function DevReg() {
         res = await contract.methods.addPatchandUpdateRequest(Patchno, cid, file[0].name, patchname, location.state.software, location.state.bugs, location.state.features, parseInt(location.state.version), Number(location.state["reqno"]) - 1).send({ from: Account });
       }
       else if (location.state["from"] == "rejects") {
-        res = await contract.methods.addPatchandUpdateReuploadStatus(Patchno, cid, file[0].name, patchname, location.state.software, location.state.bugs, location.state.features, parseInt(location.state.version), location.state.version - 1).send({ from: Account });
+        res = await contract.methods.addPatchandUpdateReuploadStatus(Patchno, cid, file[0].name, patchname, location.state.software, location.state.bugs, location.state.features, parseInt(location.state.version), location.state.version - 1,Number(location.state["reqno"])).send({ from: Account });
       }
       try {
         await axios.post("http://localhost:8800/txhistory/uploadtx", {

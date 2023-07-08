@@ -35,13 +35,12 @@ const Userreports = () => {
                     <option value="Software3">Software_3</option>
                 </select>
             </div>
-            <div className="row my-5 p-2">
+            <div className="row my-2 p-2">
                 <div className='col-lg'>
                     <h3>
                         Bugs
                     </h3>
                     <div id="bugs" className="border border-secondary p-3 my-1 mb-2 me-1 overflow-y-auto" style={{ height: "400px" }}>
-
                         {(() => {
                             if (bugs.length === 0) {
                                 return (

@@ -99,7 +99,7 @@ function Adminreq() {
 
     }
     return (
-        <div className="container my-5">
+        <div className="container my-5 col-11 mx-auto">
             <div className="container my-3">
                 <div className="col-6 col-sm-3 col-md-2">
                     <select id="Software" className="form-select" aria-label="Default select example" defaultValue="Software" onChange={(event) => {

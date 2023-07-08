@@ -11,7 +11,7 @@ function Verifierchecked() {
   let [bugs,setBugs] = useState([]);
   let [features,setFeatures] = useState([]);
   let [software,setsoftware] = useState("");
-  
+
   useEffect(() => {
     async function fun() {
       if (contract.methods !== undefined) {
@@ -52,12 +52,12 @@ function Verifierchecked() {
         {Patches.map((val, ind) => {
           return (
             <div className="card my-3" key={ind}>
-              <div className="card-body">
+              <div className="card-body pb-0">
                 <div className="d-flex justify-content-between">
                   <h6 className="card-title">Patch_No : {val.patchno}</h6>
                   <h5 className={(val.verifystatus === "Success") ? "text-success" : "text-danger"}>{val.verifystatus}</h5>
                 </div>
-                <div className="col-6 col-sm-4 col-md-6">
+                <div className="col col-md-8">
                   <table className="table table-borderless">
                     <tbody>
                       <tr>
@@ -73,20 +73,34 @@ function Verifierchecked() {
                         <td>{new Date(val.timestamp * 1000).toLocaleString()}</td>
                       </tr>
                       <tr>
+                        <td>BugFixes : </td>
+                        <td>{val.bugfixes}</td>
+                      </tr>
+                      <tr>
                         <td>patchfeatures :</td>
-                        <td>{val.patchfeatures.split("</br>")[0]}<br />{val.patchfeatures.split("</br>")[1]}</td>
+                        <td>{val.patchfeatures}</td>
                       </tr>
                       <tr>
                         <td>version :</td>
                         <td>{val.version}</td>
                       </tr>
+                      {
+                          val.rejectmessage && <tr>
+                            <td>
+                              Rejected_Reason:
+                            </td>
+                            <td>
+                            {val.rejectmessage}
+                            </td>
+                          </tr>
+                      }
                       <tr>
                           <td colSpan={2}>
                             <i className='fw-semibold' >Bugs and Features Description</i>
                             <span title="click to get the description" data-bs-toggle="modal"
                               data-bs-target="#exampleModal1" onClick={async () => {
-                                setBugs(val.bugs.split(", "));
-                                setFeatures(val.features.split(", "));
+                                setBugs(val.bugfixes.split(", "));
+                                setFeatures(val.patchfeatures.split(", "));
                                 setsoftware(val.software);
                               }}>
                               <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" className="bi bi-info-circle ms-2" viewBox="0 0 16 16" >

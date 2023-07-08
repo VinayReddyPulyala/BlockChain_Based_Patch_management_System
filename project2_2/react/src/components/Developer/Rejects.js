@@ -27,9 +27,9 @@ function Rejects() {
     }
     func();
   }, [contract]);
-  async function handlereject(event, version, software, bugs, features, patchno) {
+  async function handlereject(event, version, software, bugs, features, patchno,reqno) {
     event.preventDefault();
-    Navigate('/Developer/patchregistration', { state: { "software": software, "bugs": bugs, "features": features, "from": "rejects", "version": version, "patchno": patchno } });
+    Navigate('/Developer/patchregistration', { state: { "software": software, "bugs": bugs, "features": features, "from": "rejects", "version": version, "patchno": patchno,"reqno": reqno} });
   }
   if (Patches.length === 0) {
     return (
@@ -43,11 +43,11 @@ function Rejects() {
         <div className="col-8 mx-auto my-5" id="rejects">
           {Patches.map((val, ind) => {
             return (
-              <div key={ind} className="card my-3">
+              <div key={ind} className="card my-3 rounded-4">
                 <div className="card-body">
                   <h4 className="card-title">Patch_No : {val.patchno}</h4>
                   <div className="col-12">
-                    <table className="table table-borderless">
+                    <table className="table table-borderless mb-0">
                       <tbody>
                         <tr>
                           <td>patchname :</td>
@@ -62,7 +62,7 @@ function Rejects() {
                           <td>{new Date(val.timestamp * 1000).toLocaleString()}</td>
                         </tr>
                         <tr>
-                          <td>patchfeatures :</td>
+                          <td>patchfeatures:</td>
                           <td>{val.patchfeatures} </td>
                         </tr>
                         <tr>
@@ -74,12 +74,16 @@ function Rejects() {
                           <td>{val.version}</td>
                         </tr>
                         <tr>
-                          <td colSpan={2}>
+                          <td>Reason :</td>
+                          <td>{val.rejectmessage}</td>
+                        </tr>
+                        <tr>
+                          <td colSpan={2} className='mb-0'>
                             <i className='fw-semibold' >Bugs and Features Description</i>
                             <span title="click to get the description" data-bs-toggle="modal"
                               data-bs-target="#exampleModal1" onClick={async () => {
-                                setBugs(val.bugs.split(", "));
-                                setFeatures(val.features.split(", "));
+                                setBugs(val.bugfixes.split(", "));
+                                setFeatures(val.patchfeatures.split(", "));
                                 setsoftware(val.software);
                               }}>
                               <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" className="bi bi-info-circle ms-2" viewBox="0 0 16 16" >
@@ -94,7 +98,7 @@ function Rejects() {
                   </div>
                   <div className="d-flex justify-content-sm-end justify-content-center">
                     <button className="btn btn-primary" onClick={(event) => {
-                      handlereject(event, parseInt(val.version) + 1, val.software, val.bugfixes, val.patchfeatures, val.patchno)
+                      handlereject(event, parseInt(val.version) + 1, val.software, val.bugfixes, val.patchfeatures, val.patchno,val.reqno)
                     }}>Re-Upload
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-upload" viewBox="0 0 16 16">
                         <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"></path>

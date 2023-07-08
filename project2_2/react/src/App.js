@@ -24,6 +24,7 @@ import Userreports from './components/Labeller/Userreports';
 import Addreport from './components/Labeller/Addreport';
 import Bgsfts from './components/Labeller/Bgsfts';
 import Transactions from './components/Transactions';
+import Requests from './components/Admin/Requests';
 import "D:/project_2_2/projectblockchain/projectbpms/src/index.css";
 
 
@@ -47,7 +48,7 @@ function App() {
           <Route index element={<Adminpatches />} />
           <Route path="deploy" element={<Admindeploy />} />
           <Route path="About_us" element={<About_Us />} />
-          <Route path="req" element={<Adminreq />} />
+          <Route path="req" element={<Requests />} />
           <Route path="DownloadHistory" element={<AdminDwndhstry />} />
           <Route path="transactions" element={<Transactions />} />
         </Route>

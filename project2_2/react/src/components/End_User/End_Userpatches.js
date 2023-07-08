@@ -7,10 +7,14 @@ import $ from 'jquery';
 import context from '../../context';
 import { Web3Storage } from 'web3.storage';
 import axios from 'axios';
+import Bugfeaturedesc from '../Bugfeaturedesc';
 function End_Userpatches() {
   let [Patches, setPatches] = useState([]);
   let { contract } = useContext(context);
   let [user, setUser] = useState("");
+  let [bugs, setBugs] = useState([]);
+  let [features, setFeatures] = useState([]);
+  let [software, setsoftware] = useState("");
 
   useEffect(() => {
     async function func1() {
@@ -45,7 +49,7 @@ function End_Userpatches() {
     func1();
   }, []);
   let handledownload = async (cid, filename, patchname) => {
-    let client = new Web3Storage({token:process.env.REACT_APP_apikey});
+    let client = new Web3Storage({ token: process.env.REACT_APP_apikey });
     let file = await client.get(cid);
     const data = await file.files();
     const url = URL.createObjectURL(data[0]);
@@ -64,41 +68,57 @@ function End_Userpatches() {
       console.log(err);
     }
   }
-  // console.log(Patches);
   if (Patches.length !== 0) {
     return (
-      <div className="container my-5 table-responsive col-11 mx-auto" id="patchdtls">
-        <table className="table table-striped table-borderless" id="tableId">
-          <thead>
-            <tr>
-              <th>S.No</th>
-              <th>Patch_Name</th>
-              <th>Software</th>
-              <th>Features</th>
-              <th>timestamp</th>
-              <th>Download</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Patches.map((val, ind) => {
-              return (
-                <tr key={ind}>
-                  <td>{ind + 1}</td>
-                  <td>{val.patchname}</td>
-                  <td>{val.software}</td>
-                  <td>{val.patchfeatures.split("</br>")[0]} <br /> {val.patchfeatures.split("</br>")[1]} </td>
-                  <td>{new Date(val.deploytime * 1000).toLocaleString()}</td>
-                  <td>
-                    <button className="btn btn-primary" onClick={() => {
-                      handledownload(val.cid, val.filename, val.patchname);
-                    }}>Download</button>
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
+      <>
+        <Bugfeaturedesc bugs={bugs} features={features} software={software} />
+        <div className="container my-5 table-responsive col-11 mx-auto" id="patchdtls">
+          <table className="table table-striped table-borderless" id="tableId">
+            <thead>
+              <tr>
+                <th>S.No</th>
+                <th>Patch_Name</th>
+                <th>Software</th>
+                <th>BugFixes</th>
+                <th>Features</th>
+                <th>timestamp</th>
+                <th>Download</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Patches.map((val, ind) => {
+                return (
+                  <tr key={ind}>
+                    <td>{ind + 1}</td>
+                    <td>{val.patchname}
+                      <span title="click to get the description" data-bs-toggle="modal"
+                        data-bs-target="#exampleModal1" onClick={async () => {
+                          setBugs(val.bugfixes.split(", "));
+                          setFeatures(val.patchfeatures.split(", "));
+                          setsoftware(val.software);
+                        }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" className="bi bi-info-circle ms-2" viewBox="0 0 16 16" >
+                          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                          <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+                        </svg>
+                      </span>
+                    </td>
+                    <td>{val.software}</td>
+                    <td>{val.bugfixes}</td>
+                    <td>{val.patchfeatures.split("</br>")[0]} <br /> {val.patchfeatures.split("</br>")[1]} </td>
+                    <td>{new Date(val.deploytime * 1000).toLocaleString()}</td>
+                    <td>
+                      <button className="btn btn-primary" onClick={() => {
+                        handledownload(val.cid, val.filename, val.patchname);
+                      }}>Download</button>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      </>
     )
   }
   else {
@@ -108,4 +128,4 @@ function End_Userpatches() {
   }
 }
 
-export default End_Userpatches
+export default End_Userpatches;

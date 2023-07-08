@@ -19,7 +19,7 @@ function AdminDwndhstry() {
   if(Object.keys(data).length){
     console.log(data);
     return (
-      <div className="border border-secondary">
+      <div>
         <div className="my-5 col-10 mx-auto" id="cards">
           {
             Object.keys(data).map((val, ind) => {

@@ -10,9 +10,9 @@ function Verifierunchecked() {
   const { contract } = useContext(context);
   let { Account } = useContext(AccountContext);
   let [Patches, setPatches] = useState([]);
-  let [bugs,setBugs] = useState([]);
-  let [features,setFeatures] = useState([]);
-  let [software,setsoftware] = useState("");
+  let [bugs, setBugs] = useState([]);
+  let [features, setFeatures] = useState([]);
+  let [software, setsoftware] = useState("");
   let Navigate = useNavigate();
 
   useEffect(() => {
@@ -32,9 +32,9 @@ function Verifierunchecked() {
   console.log(Account);
 
 
-  let handleconfirm = async (patchname, version) => {
+  let handleconfirm = async (patchname, version, reqno, software, bugfixes, patchfeatures) => {
     try {
-      let res = await contract.methods.Accept(patchname, version).send({ from: Account });
+      let res = await contract.methods.Accept(patchname, version, reqno, software, bugfixes.split(", "), patchfeatures.split(", ")).send({ from: Account });
       try {
         await axios.post("http://localhost:8800/txhistory/uploadtx", {
           role: "verifier",
@@ -81,9 +81,9 @@ function Verifierunchecked() {
   }
 
 
-  let handledeny = async (patchname, version) => {
+  let handledeny = async (patchname, version,message,reqno) => {
     try {
-      let res = await contract.methods.Reject(patchname, version).send({ from: Account });
+      let res = await contract.methods.Reject(patchname, version,message,reqno).send({ from: Account });
       try {
         await axios.post("http://localhost:8800/txhistory/uploadtx", {
           role: "verifier",
@@ -141,6 +141,32 @@ function Verifierunchecked() {
     a.click();
   }
 
+  let showInp = (ind) => {
+    setPatches((prev) => prev.map((val, i) => {
+      if (i == ind) {
+        return { ...val, showinput: true };
+      }
+      return val;
+    }));
+  }
+
+  let hideinp = (ind) => {
+    setPatches((prev) => prev.map((val, i) => {
+      if (i == ind) {
+        return { ...val, showinput: false };
+      }
+      return { ...val };
+    }));
+  }
+
+  let setmsg = (event,ind)=>{
+    setPatches((prev) => prev.map((val, i) => {
+      if (i == ind) {
+        return { ...val, message: event.target.value };
+      }
+      return { ...val };
+    }));
+  }
 
   if (Patches.length === 0) {
     return (
@@ -153,23 +179,58 @@ function Verifierunchecked() {
   else {
     return (
       <>
-        <Bugfeaturedesc bugs={bugs} features={features} software={software}/>
+        <Bugfeaturedesc bugs={bugs} features={features} software={software} />
         {Patches.map((val, ind) => {
           return (
             <div className="card my-3" key={ind}>
-              <div className="card-body">
+              <div className="card-body pb-0">
                 <div className="d-flex justify-content-between">
                   <h6 className="card-title">Patch_No : {val.patchno}</h6>
                   <div className="d-flex justify-content-between">
-                    <button className="btn mx-3 btn-primary" onClick={() => {
-                      handleconfirm(val.patchname, val.version);
-                    }}>Confirm</button>
-                    <button className="btn mx-3 btn-danger" onClick={() => {
-                      handledeny(val.patchname, val.version);
-                    }}>Deny</button>
+                    {
+                      (() => {
+                        if (val.showinput) {
+                          return (
+                            <button className="btn mx-3 btn-danger" onClick={() => {
+                              handledeny(val.patchname, val.version,val.message,val.reqno);
+                            }}>
+                              Submit
+                            </button>
+                          )
+                        }
+                        else {
+                          return (
+                            <button className="btn mx-3 btn-danger" onClick={() => {
+                              showInp(ind);
+                            }}>Deny</button>
+                          )
+                        }
+                      })()
+                    }
+
+                    {(() => {
+                      if (val.showinput) {
+                        return (
+                          <button className='btn mx-3 btn-secondary' onClick={() => {
+                            hideinp(ind)
+                          }}>
+                            cancel
+                          </button>
+                        )
+                      }
+                      else {
+                        return (
+                          <button className="btn mx-3 btn-primary" onClick={() => {
+                            handleconfirm(val.patchname, val.version, val.reqno, val.software, val.bugfixes, val.patchfeatures);
+                          }}>Confirm</button>
+                        )
+                      }
+                    })()
+                    }
+
                   </div>
                 </div>
-                <div className="col-6 col-sm-4 col-md-6">
+                <div className="col col-md-6">
                   <table className="table table-borderless">
                     <tbody>
                       <tr>
@@ -185,33 +246,44 @@ function Verifierunchecked() {
                         <td>{new Date(val.timestamp * 1000).toLocaleString()}</td>
                       </tr>
                       <tr>
-                        <td>patchfeatures :</td>
-                        <td>{val.patchfeatures}</td>
-                      </tr>
-                      <tr>
                         <td>Bug Fixes :</td>
                         <td>{val.bugfixes}</td>
+                      </tr>
+                      <tr>
+                        <td>patchfeatures :</td>
+                        <td>{val.patchfeatures}</td>
                       </tr>
                       <tr>
                         <td>version :</td>
                         <td>{val.version}</td>
                       </tr>
+                      {val.showinput && <tr>
+                        <td>
+                          Reject_reason
+                        </td>
+                        <td>
+                          <textarea className="form-control" rows="2" onChange={(event)=>{
+                            setmsg(event,ind);
+                          }}></textarea>
+                        </td>
+                      </tr>
+                      }
                       <tr>
-                          <td colSpan={2}>
-                            <i className='fw-semibold' >Bugs and Features Description</i>
-                            <span title="click to get the description" data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1" onClick={async () => {
-                                setBugs(val.bugs.split(", "));
-                                setFeatures(val.features.split(", "));
-                                setsoftware(val.software);
-                              }}>
-                              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" className="bi bi-info-circle ms-2" viewBox="0 0 16 16" >
-                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                                <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
-                              </svg>
-                            </span>
-                          </td>
-                        </tr>
+                        <td colSpan={2} className='pb-0'>
+                          <i className='fw-semibold' >Bugs and Features Description</i>
+                          <span title="click to get the description" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal1" onClick={async () => {
+                              setBugs(val.bugfixes.split(", "));
+                              setFeatures(val.patchfeatures.split(", "));
+                              setsoftware(val.software);
+                            }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" className="bi bi-info-circle ms-2" viewBox="0 0 16 16" >
+                              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                              <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+                            </svg>
+                          </span>
+                        </td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>

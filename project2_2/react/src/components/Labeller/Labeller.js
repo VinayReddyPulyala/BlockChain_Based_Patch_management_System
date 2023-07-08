@@ -37,7 +37,7 @@ function Labeller() {
                     </ul>
                 </div>
             </nav>
-            <div className="border border-secondary">
+            <div className="border border-secondary overflow-y-auto" style={{height:"550px"}}>
                 <AccountContext.Provider value={{ Account: account }}>
                     <Outlet />
                 </AccountContext.Provider>
