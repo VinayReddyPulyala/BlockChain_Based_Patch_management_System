@@ -18,36 +18,31 @@ import Labeller from './components/Labeller/Labeller';
 import Rejects from './components/Developer/Rejects';
 import End_Userpatches from './components/End_User/End_Userpatches';
 import Home from './components/Home';
-import About_Us from './components/About_Us';
-import Contact_Us from './components/Contact_Us';
 import Userreports from './components/Labeller/Userreports';
 import Addreport from './components/Labeller/Addreport';
 import Bgsfts from './components/Labeller/Bgsfts';
 import Transactions from './components/Transactions';
 import Requests from './components/Admin/Requests';
 import "D:/project_2_2/projectblockchain/projectbpms/src/index.css";
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import PageNotFound from './components/PageNotFound';
 
 function App() {
   return (
     <Router>
       <Navbar />
       <Routes>
-
         <Route index element={<Home />} />
-        <Route path="/About_Us" element={<About_Us />} />
-        <Route path="/Contact_Us" element={<Contact_Us />} />
 
-        <Route path="/End_User" element={<End_User/>}>
+        <Route path="/End_User" element={<End_User />}>
           <Route index element={<End_Userpatches />} />
-          <Route path="Patches" element={<End_Userpatches />} />
           <Route path="Report" element={<Report />} />
         </Route>
 
         <Route path="/admin" element={<Adminhome />}>
           <Route index element={<Adminpatches />} />
           <Route path="deploy" element={<Admindeploy />} />
-          <Route path="About_us" element={<About_Us />} />
           <Route path="req" element={<Requests />} />
           <Route path="DownloadHistory" element={<AdminDwndhstry />} />
           <Route path="transactions" element={<Transactions />} />
@@ -56,13 +51,11 @@ function App() {
         <Route path="/verifier" element={<Verifier />}>
           <Route index element={<Verifierunchecked />} />
           <Route path="checked" element={<Verifierchecked />} />
-          <Route path="unchecked" element={<Verifierunchecked />} />
           <Route path="transactions" element={<Transactions />} />
         </Route>
 
         <Route path="/Developer" element={<Developer />}>
           <Route index element={<DeveloperRequests />} />
-          <Route path="Requests" element={<DeveloperRequests />} />
           <Route path="patchregistration" element={<DevReg />} />
           <Route path="Rejects" element={<Rejects />} />
           <Route path="transactions" element={<Transactions />} />
@@ -74,8 +67,9 @@ function App() {
           <Route path="Userreports" element={<Userreports />} />
           <Route path="transactions" element={<Transactions />} />
         </Route>
-
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
+      <ToastContainer />
     </Router>
   );
 }

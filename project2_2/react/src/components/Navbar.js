@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
 import Cookies from 'universal-cookie';
-
+import workflow from "C:/Users/Vinay Reddy/Downloads/Flowchart (5).png";
 
 function Navbar() {
     let navigate = useNavigate();
@@ -104,9 +103,9 @@ function Navbar() {
     useEffect(() => {
         async function func() {
             try {
-                let { data } = await axios.get("http://localhost:8800/initlog",{
-                    withCredentials:true
-                }); 
+                let { data } = await axios.get("http://localhost:8800/initlog", {
+                    withCredentials: true
+                });
                 if (!data.error) {
                     setrole(data.role);
                 } else {
@@ -173,10 +172,26 @@ function Navbar() {
                                 </div>
                             </form>
                         </div>
-
                     </div>
                 </div>
             </div>
+
+            <div className="modal fade" id="exampleModal2" tabIndex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+                <div className="modal-dialog modal-fullscreen">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h1 className="modal-title fs-5" id="exampleModalLabel1">Workflow</h1>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close"></button>
+                        </div>
+                        <div className="modal-body">
+                            <div>
+                                <img src={workflow} style={{ maxWidth: "100%" }} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <nav className="navbar navbar-expand-md bg-success">
                 <div className="container-fluid">
                     <button className="navbar-toggler text-bg-light" type="button" data-bs-toggle="collapse"
@@ -184,8 +199,9 @@ function Navbar() {
                         aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
                     </button>
-                    <a className="navbar-brand text-light col-3" href="#">
-                        <img src="https://kmit.in/images/kmit-bar.png"
+                    <a className="navbar-brand text-light col-3" href="#" data-bs-toggle="modal"
+                        data-bs-target="#exampleModal2">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMosupNQ_iHq_gEvJI0ghlHZPLaFXQM6I2eA&usqp=CAU"
                             width="100" height="40" />
                     </a>
                     <div className="ms-2 collapse navbar-collapse d-md-flex justify-content-md-between" id="navbarTogglerDemo03">
@@ -194,10 +210,14 @@ function Navbar() {
                                 <Link className="nav-link text-dark" to="/">Home</Link>
                             </li>
                             <li className="nav-item mx-2">
-                                <Link className="nav-link text-dark" to="/About_Us">About Us</Link>
+                                <a className="nav-link text-dark" href="#aboutus" onClick={() => {
+                                    navigate("/");
+                                }}>About Us</a>
                             </li>
                             <li className="nav-item mx-2">
-                                <Link className="nav-link text-dark" to="/Contact_Us">Contact Us</Link>
+                                <a className="nav-link text-dark" href="#contactus" onClick={() => {
+                                    navigate("/");
+                                }}>Contact Us</a>
                             </li>
                             <li className="nav-item mx-2">
                                 <Link className="nav-link text-dark" to={`/${role}`}>DashBoard</Link>
@@ -230,8 +250,7 @@ function Navbar() {
 
                     </div>
                 </div>
-            </nav>
-            <ToastContainer />
+            </nav>   
         </div>
     )
 }

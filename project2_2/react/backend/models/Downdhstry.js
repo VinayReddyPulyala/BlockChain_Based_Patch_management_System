@@ -7,8 +7,7 @@ const DownloadsSchema = new mongoose.Schema({
     },
     date: {
         type: Date,
-        required: true,
-        default: Date.now() 
+        required: true, 
     },
     patchname: {
         type: String,

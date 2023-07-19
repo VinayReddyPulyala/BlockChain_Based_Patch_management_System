@@ -6,20 +6,19 @@ import 'jquery/dist/jquery.min.js';
 import "datatables.net-dt/js/dataTables.dataTables"
 import "datatables.net-dt/css/jquery.dataTables.min.css"
 import $ from 'jquery';
-import Web3 from 'web3';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Bugfeaturedesc from '../Bugfeaturedesc';
+import { toast } from 'react-toastify';
 function Admindeploy() {
     const { contract } = useContext(context);
     let [Patches, setPatches] = useState([]);
     let { Account } = useContext(AccountContext);
-    let [bugs,setBugs] = useState([]);
-    let [features,setFeatures] = useState([]);
-    let [software,setsoftware] = useState("");
+    let [bugs, setBugs] = useState([]);
+    let [features, setFeatures] = useState([]);
+    let [software, setsoftware] = useState("");
     let Navigate = useNavigate();
     useEffect(() => {
-
         async function fun() {
             if (contract.methods !== undefined) {
                 console.log(contract);
@@ -38,58 +37,78 @@ function Admindeploy() {
         }
         fun();
     }, [contract]);
+
+    let generateerror = (err) => {
+        toast.error(err, {
+            position: "top-right",
+            autoClose: 3000,
+            closeOnClick: true,
+            hideProgressBar: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
+    }
+
+    let generatesuccess = (mes) => {
+        toast.success(mes, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
+    }
+
     console.log(Account);
-    async function handledeploychange(name, version,reqno) {
+    async function handledeploychange(name, version, reqno) {
         try {
-            let res = await contract.methods.deploy(name, version).send({ from: Account });
-            document.getElementById("tx").innerHTML = `Successfully Deployed, Your Transaction Hash : ${res.transactionHash}`;
+            let res = await contract.methods.deploy(name, version, reqno).send({ from: Account });
             try {
+                generatesuccess(`Transaction Successfull Your Transaction hash : ${res.transactionHash}`);
                 await axios.post("http://localhost:8800/txhistory/uploadtx", {
                     role: "admin",
                     tx: res.transactionHash,
                     desc: "Deploy a Patch",
                     status: "Success"
                 });
-                setTimeout(() => {
-                    Navigate("/admin");
-                }, 5000);
             } catch (err) {
-                alert("Transaction Successfull Failed to Upload to database!");
+                generateerror("Error while storing the transaction hash");
             }
             setTimeout(() => {
-                window.location.reload();
-            }, 5000);
+                Navigate("/admin");
+            }, 3000);
+
         } catch (err) {
             console.log(err);
             console.log(JSON.parse(err.message.slice(49, err.message.length - 1)).value.data.data.hash);
             if (err.message.includes("MetaMask Tx Signature: User denied transaction signature")) {
-                alert("User denied transaction signature");
+                generateerror("User denied transaction signature");
             }
             else if (err.message.includes("[ethjs-query] while formatting outputs from RPC")) {
                 try {
-                    alert("Only Admin has authority to do this..");
+                    generateerror("Only Admin has authority to do this..");
                     await axios.post("http://localhost:8800/txhistory/uploadtx", {
-                        role: "Developer",
+                        role: "admin",
                         tx: JSON.parse(err.message.slice(49, err.message.length - 1)).value.data.data.hash,
                         desc: "Deploy a Patch",
                         status: "Failed"
                     });
-                    setTimeout(() => {
-                        Navigate("/Developer");
-                    }, 5000);
                 } catch (err) {
-                    alert("Transaction Failed to Upload to database!");
+                    generateerror("Error while storing the transaction hash");
                 }
-                setTimeout(() => {
-                    window.location.reload();
-                }, 5000);
             }
+            setTimeout(() => {
+                window.location.reload();
+            }, 4000);
         }
     }
     if (Patches.length !== 0) {
         return (
             <>
-            <Bugfeaturedesc bugs={bugs} features={features} software={software}/>
+                <Bugfeaturedesc bugs={bugs} features={features} software={software} />
                 <div className="container my-5 table-responsive col-11 mx-auto" id="patchdpl">
                     <table className="table table-striped table-borderless" id="tableId">
                         <thead>
@@ -133,7 +152,7 @@ function Admindeploy() {
                                                     return "Deployed";
                                                 } else {
                                                     return <button className="btn btn-primary" onClick={() => {
-                                                        handledeploychange(val.patchname, val.version,val.reqno);
+                                                        handledeploychange(val.patchname, val.version, val.reqno);
                                                     }}>Deploy</button>;
                                                 }
                                             })()}
@@ -149,7 +168,7 @@ function Admindeploy() {
     }
     else {
         return (
-            <div> No data Available...</div>
+            <div>  No data Available...</div>
         )
     }
 }

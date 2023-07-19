@@ -2,14 +2,28 @@ import React, { useEffect, useState } from 'react'
 import axios from "axios";
 import Web3 from 'web3';
 import TransactionModal from './TransactionModal';
+import { toast } from 'react-toastify';
 
 const Transactions = () => {
     let [txs, settxs] = useState([]);
     let [txobj, settxobj] = useState([]);
     let [tx, settx] = useState({});
-    let [txind,settxind] = useState(0);
+    let [txind, settxind] = useState(0);
 
     let web3 = new Web3(window.ethereum);
+
+    let generateerror = (err) => {
+        toast.error(err, {
+            position: "bottom-right",
+            autoClose: 2000,
+            closeOnClick: true,
+            hideProgressBar: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
+    }
+
     useEffect(() => {
         async function func() {
             try {
@@ -29,7 +43,7 @@ const Transactions = () => {
                 }
             } catch (err) {
                 console.log(err);
-                alert("Error while fetching data Please try after some time!!");
+                generateerror("No Transaction data Available!!");
             }
         }
         func();
@@ -37,8 +51,8 @@ const Transactions = () => {
     if (txobj.length !== 0) {
         return (
             <>
-                <TransactionModal txs={txs} tx={tx} txind={txind}/>
-                <div className="my-5 col-8 col-md-6 col-lg-5 col-xl-4 mx-auto">
+                <TransactionModal txs={txs} tx={tx} txind={txind} />
+                <div className="my-3 col-8 col-md-6 col-lg-5 col-xl-4 mx-auto">
                     {
                         txs.map((val, ind) => {
                             return (
@@ -56,7 +70,7 @@ const Transactions = () => {
                                                 (() => {
                                                     if (val.status === "Success") {
                                                         return (
-                                                            <div style={{ color: "rgb(0, 255, 0)"}}>
+                                                            <div style={{ color: "rgb(0, 255, 0)" }}>
                                                                 {(txobj[ind].gas * txobj[ind].gasPrice / Math.pow(10, 18)).toFixed(5)}ETH-
                                                             </div>
                                                         )

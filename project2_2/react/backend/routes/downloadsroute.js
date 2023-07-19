@@ -6,9 +6,9 @@ const router = express.Router();
 router.post("/", async (req, res) => {
     console.log(req.body);
     try {
-        const userdwnd = await Downloadsmodel.create(req.body);
-        console.log(userdwnd);
-        res.status(200).json({ message: "Successfull" });
+        const userdwnd = await Downloadsmodel.create({...req.body,date:Date.now()});
+
+        res.status(200).json({ message: "Successful" });
     } catch (err) {
         res.json({ error: "Internal Server Error" });
     }

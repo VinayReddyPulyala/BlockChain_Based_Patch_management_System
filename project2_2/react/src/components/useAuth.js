@@ -26,7 +26,8 @@ const useAuth = (val) => {
                     withCredentials: true
                 });
                 if (data.role_error) {
-                    navigate(-1);
+                    navigate("/");
+                    generateerror("Unauthorised Access");
                 }
                 else if (data.error) {
                     navigate("/");

@@ -12,10 +12,11 @@ const clientroute = require("./routes/clientroute");
 dotenv.config({path:"../.env"});
 const app = express();
 app.use(express.json());
+
 app.use(cors({
-    credentials : true,
-    origin : "http://localhost:3000"
-}));
+    origin: "http://localhost:3000",
+    credentials: true
+  }));
 
 let mongooseconnect = async ()=>{
     try{

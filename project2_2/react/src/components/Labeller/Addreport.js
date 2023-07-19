@@ -4,6 +4,7 @@ import AccountContext from '../AccountContext';
 import context from '../../context';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const Addreport = () => {
     let bugref = useRef(null);
@@ -16,6 +17,29 @@ const Addreport = () => {
     let Navigate = useNavigate();
 
     console.log(contract);
+    let generateerror = (err) => {
+        toast.error(err, {
+            position: "top-right",
+            autoClose: 3000,
+            closeOnClick: true,
+            hideProgressBar: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
+    }
+    let generatesuccess = (mes) => {
+        toast.success(mes, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
+    }
+
     let upload = async (e) => {
         e.preventDefault();
         let bugs = [];
@@ -26,6 +50,10 @@ const Addreport = () => {
             obj["status"] = "unresolved";
             obj["priority"] = document.getElementById("bugpriority" + i).value;
             obj["bugdesc"] = document.getElementById("bugDescription" + i).value;
+            if(obj["bugdesc"] == "" || obj["bugname"] == "" || obj["priority"==""] || obj["status"]==""){
+                generateerror("Please fill the form completely");
+                return ;
+            }
             bugs.push(obj);
         }
         for (let i = 1; i <= featurecount; i++) {
@@ -34,6 +62,10 @@ const Addreport = () => {
             obj["status"] = "unresolved";
             obj["priority"] = document.getElementById("featurepriority" + i).value;
             obj["featuredesc"] = document.getElementById("featureDescription" + i).value;
+            if(obj["featuredesc"] == "" || obj["featurename"] == "" || obj["priority"==""] || obj["status"]==""){
+                generateerror("Please fill the form completely");
+                return ;
+            }
             features.push(obj);
         }
         console.log(software, bugs, features);
@@ -41,43 +73,41 @@ const Addreport = () => {
         try {
             let res = await contract.methods.labellerreport(software, bugs, features).send({ from: Account });
             try {
+                generatesuccess(`Transaction Successfull Your Transaction hash : ${res.transactionHash}`);
                 await axios.post("http://localhost:8800/txhistory/uploadtx", {
                     role: "labeller",
                     tx: res.transactionHash,
                     desc: "Bug and Feature Upload",
                     status: "Success"
                 });
-                setTimeout(() => {
-                    Navigate("/labeller");
-                }, 5000);
             } catch (err) {
-                alert("Transaction Successfull Failed to Upload to database!");
+                generateerror("Transaction Successfull Failed to Upload to database!");
             }
+            setTimeout(() => {
+                Navigate("/labeller");
+            }, 3000);
         } catch (err) {
             console.log(err);
             console.log(JSON.parse(err.message.slice(49, err.message.length - 1)).value.data.data.hash);
             if (err.message.includes("MetaMask Tx Signature: User denied transaction signature")) {
-                alert("User denied transaction signature");
+                generateerror("User denied transaction signature");
             }
             else if (err.message.includes("[ethjs-query] while formatting outputs from RPC")) {
                 try {
-                    alert("Only labeller has authority to do this..");
+                    generateerror("Only labeller has authority to do this..");
                     await axios.post("http://localhost:8800/txhistory/uploadtx", {
                         role: "labeller",
                         tx: JSON.parse(err.message.slice(49, err.message.length - 1)).value.data.data.hash,
                         desc: "Bug and feature upload",
                         status: "Failed"
                     });
-                    setTimeout(() => {
-                        Navigate("/labeller");
-                    }, 5000);
                 } catch (err) {
-                    alert("Transaction Failed to Upload to database!");
+                    generateerror("Error while storing the transaction hash");
                 }
-                setTimeout(() => {
-                    window.location.reload();
-                }, 5000);
             }
+            setTimeout(() => {
+                window.location.reload();
+            }, 4000);
         }
     }
     let addbug = () => {
@@ -178,7 +208,7 @@ const Addreport = () => {
                                 <label className="col-sm-4 form-label" htmlFor="bugpriority1">Priority</label>
                                 <div className="col-sm col-sm-3 col-lg-5">
                                     <select className="form-select" id="bugpriority1" required>
-                                        <option value="0">NA</option>
+                                        <option value="0" disabled>NA</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
@@ -214,7 +244,7 @@ const Addreport = () => {
                                 <label className="col-sm-4 form-label" htmlFor="featurepriority1">Priority</label>
                                 <div className="col-sm col-sm-3 col-lg-5">
                                     <select className="form-select" id="featurepriority1" required>
-                                        <option value="0">NA</option>
+                                        <option value="0" disabled>NA</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>

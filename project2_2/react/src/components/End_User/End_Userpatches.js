@@ -15,7 +15,7 @@ function End_Userpatches() {
   let [bugs, setBugs] = useState([]);
   let [features, setFeatures] = useState([]);
   let [software, setsoftware] = useState("");
-
+  let [retrievestts, setretrievestts] = useState(null);
   useEffect(() => {
     async function func1() {
 
@@ -49,12 +49,14 @@ function End_Userpatches() {
     func1();
   }, []);
   let handledownload = async (cid, filename, patchname) => {
+    setretrievestts(true);
     let client = new Web3Storage({ token: process.env.REACT_APP_apikey });
     let file = await client.get(cid);
     const data = await file.files();
     const url = URL.createObjectURL(data[0]);
     let a = document.createElement("a");
     a.href = url;
+    setretrievestts(false);
     a.download = filename;
     a.click();
     try {
@@ -72,7 +74,15 @@ function End_Userpatches() {
     return (
       <>
         <Bugfeaturedesc bugs={bugs} features={features} software={software} />
-        <div className="container my-5 table-responsive col-11 mx-auto" id="patchdtls">
+        {
+          retrievestts && (
+            <div className="loading-overlay">
+              <div className=' fw-semibold fs-5 text-light'>Your requested patch is being processed and will be made available for download shortly..</div>
+              <div className="loading"></div>
+            </div>
+          )
+        }
+        <div className="container my-5 table-responsive col-11 mx-auto">
           <table className="table table-striped table-borderless" id="tableId">
             <thead>
               <tr>

@@ -12,7 +12,6 @@ router.post("/uploadtx", async (req, res) => {
     try {
         let check = await TxhistoryModel.find({ role });
         let new_tx;
-        console.log(check);
         if (check.length) {
             new_tx = await TxhistoryModel.findOneAndUpdate({ role }, {
                 $push: {
@@ -38,7 +37,7 @@ router.post("/uploadtx", async (req, res) => {
                         }
                     ]
                 })
-                console.log(new_tx);
+
             } catch (err) {
                 return res.status(500).json({ "message": "Error in creating record" })
             }
@@ -56,7 +55,7 @@ router.get("/", async (req, res) => {
         let { id } = jwt.verify(token.jwt, process.env.tokensignature);
         let user = await User.findById(id);
         let transactions = await TxhistoryModel.find({ role: user.role });
-        console.log(transactions);
+
         res.status(200).json(transactions[0]);
     } catch (err) {
         console.log(err);

@@ -14,19 +14,6 @@ router.get("/", async (req, res) => {
 });
 
 
-router.get("/gf", async (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    try {
-        console.log(req.cookies);
-        const bugs = await bugsmodel.find();
-        res.status(200).json(bugs);
-    }
-    catch (error) {
-        res.status(400).json({ message: error });
-    }
-});
-
 router.post("/", async (req, res) => {
     try {
         let bugs = [];

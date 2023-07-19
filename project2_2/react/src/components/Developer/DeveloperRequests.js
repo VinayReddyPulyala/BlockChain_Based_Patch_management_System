@@ -36,7 +36,7 @@ function DeveloperRequests() {
     return (
       <>
         <Bugfeaturedesc bugs={bugs} features={features} software={software}/>
-
+        
         <div className="col-8 mx-auto my-5" id="requests">
           {requests.map((val, ind) => {
             return (

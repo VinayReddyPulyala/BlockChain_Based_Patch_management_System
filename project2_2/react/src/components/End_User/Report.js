@@ -2,11 +2,12 @@ import React, { useRef, useState } from 'react'
 import ReactDOM from 'react-dom';
 import Axios from "axios";
 import useAuth from '../useAuth';
+import { toast } from 'react-toastify';
 function Report() {
     let bugref = useRef(null);
     let featureref = useRef(null);
-    let [software,setSoftware] = useState("");
-    
+    let [software, setSoftware] = useState("");
+
     function addbug() {
         const bugElement = (
             <div className="mb-2">
@@ -26,7 +27,32 @@ function Report() {
         const featureNode = ReactDOM.render(featureElement, document.createElement('div'));
         featureref.current.appendChild(featureNode);
     }
-    async function handlereport(){
+
+    let generateerror = (err) => {
+        toast.error(err, {
+            position: "top-right",
+            autoClose: 3000,
+            closeOnClick: true,
+            hideProgressBar: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
+    }
+    let generatesuccess = (mes) => {
+        toast.success(mes, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
+    }
+
+
+    async function handlereport() {
         let bugs = (Array.from(document.querySelectorAll(".bugdesc"), (val) => val.value)).filter((val) => {
             let re = /[a-zA-Z0-9]/;
             return re.test(val);
@@ -35,22 +61,23 @@ function Report() {
             let re = /[a-zA-Z0-9]/;
             return re.test(val);
         });
-        console.log(software,bugs,features);
-        try{
-
-            await Axios.post("http://localhost:8800/bugs",{
-                    "software" : software,
-                    "bugs" : bugs
-                });
-            await Axios.post("http://localhost:8800/features",{
-                    "software" : software,
-                    "features" : features
-                });
-                alert("Successfully uploaded ! Thank you for your report");
-        }catch(err){
-            alert(`Error while submitting report `);
+        console.log(software, bugs, features);
+        try {
+            await Axios.post("http://localhost:8800/bugs", {
+                "software": software,
+                "bugs": bugs
+            });
+            await Axios.post("http://localhost:8800/features", {
+                "software": software,
+                "features": features
+            });
+            generatesuccess("Successfully uploaded ! Thank you for your report");
+        } catch (err) {
+            generateerror(`Error while submitting report `);
         }
-        window.location.reload();
+        setTimeout(() => {
+            window.location.reload();
+        }, 4000);
     }
 
     return (
@@ -59,7 +86,7 @@ function Report() {
                 <div className="row mb-3">
                     <label className="col-sm-4 col-form-label" htmlFor="Software">Software</label>
                     <div className="col-sm col-sm-6">
-                        <select id="Software" className="form-select" defaultValue="Software" aria-label="Default select example" onChange={(event)=>{
+                        <select id="Software" className="form-select" defaultValue="Software" aria-label="Default select example" onChange={(event) => {
                             setSoftware(event.target.value);
                         }}>
                             <option disabled>Software</option>

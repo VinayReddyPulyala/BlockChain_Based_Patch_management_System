@@ -61,27 +61,7 @@ const Bgsfts = () => {
                                 </svg>
                               </span>
                             </td>
-                            {(() => {
-                              if (val.priority !== 0) {
-                                return (
-                                  <td>{val.priority}</td>
-                                )
-                              }
-                              else {
-                                return (
-                                  <td>
-                                    <select className="form-select">
-                                      <option>NA</option>
-                                      <option value="1">1</option>
-                                      <option value="2">2</option>
-                                      <option value="3">3</option>
-                                      <option value="4">4</option>
-                                      <option value="5">5</option>
-                                    </select>
-                                  </td>
-                                )
-                              }
-                            })()}
+                            <td> {val.priority} </td>
                             <td>{val.status}</td>
                           </tr>
                         )
@@ -92,10 +72,10 @@ const Bgsfts = () => {
               }
             })()}
           </div>
-        </div> 
+        </div>
 
         <div className='col-lg'>
-        <h3>
+          <h3>
             Features
           </h3>
           <div id="features" className="col-lg border border-secondary my-1 p-3 mb-2 me-1 overflow-y-auto" style={{ height: "400px" }}>
@@ -130,27 +110,7 @@ const Bgsfts = () => {
                                 </svg>
                               </span>
                             </td>
-                            {(() => {
-                              if (val.priority !== 0) {
-                                return (
-                                  <td>{val.priority}</td>
-                                )
-                              }
-                              else {
-                                return (
-                                  <td>
-                                    <select className="form-select">
-                                      <option>NA</option>
-                                      <option value="1">1</option>
-                                      <option value="2">2</option>
-                                      <option value="3">3</option>
-                                      <option value="4">4</option>
-                                      <option value="5">5</option>
-                                    </select>
-                                  </td>
-                                )
-                              }
-                            })()}
+                            <td> {val.priority} </td>
                             <td>{val.status}</td>
                           </tr>
                         )
@@ -162,9 +122,7 @@ const Bgsfts = () => {
             })()}
           </div>
         </div>
-        {/* <div className="d-flex justify-content-center">
-          <button className="btn btn-primary">Commit Changes</button>
-        </div> */}
+
       </div>
     </div>
   )
