@@ -3,7 +3,7 @@ import { Link, Navigate, useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { toast } from "react-toastify";
 import Cookies from 'universal-cookie';
-import workflow from "C:/Users/Vinay Reddy/Downloads/Flowchart (5).png";
+import workflow from "C:/Users/Vinay Reddy/Downloads/Flowchart1.jpeg";
 
 function Navbar() {
     let navigate = useNavigate();

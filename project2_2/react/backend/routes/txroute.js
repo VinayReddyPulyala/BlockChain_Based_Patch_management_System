@@ -8,7 +8,6 @@ const router = express.Router();
 
 router.post("/uploadtx", async (req, res) => {
     const { tx, desc, role, status } = req.body;
-    console.log(role);
     try {
         let check = await TxhistoryModel.find({ role });
         let new_tx;

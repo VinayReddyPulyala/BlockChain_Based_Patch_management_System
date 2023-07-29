@@ -12,7 +12,7 @@ const Home = () => {
           <div className="carousel-inner">
             <div className="carousel-item active">
               <img src="https://www.analyticsinsight.net/wp-content/uploads/2022/03/Ethereum-Price-Prediction.jpg" className="d-block w-100" alt="..." />
-              <div class="carousel-caption d-none d-md-block">
+              <div className="carousel-caption d-none d-md-block">
                 <h2>BlockChain based Patch Management System</h2>
               </div>
             </div>

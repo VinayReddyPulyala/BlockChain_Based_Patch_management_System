@@ -30,6 +30,10 @@ const Transactions = () => {
                 let { data } = await axios.get("http://localhost:8800/txhistory", {
                     withCredentials: true
                 });
+                if(!data){
+                    generateerror("No Transactions available");
+                    return ;
+                }
                 data.history.reverse();
                 settxs(data.history);
                 if (data) {
@@ -43,7 +47,7 @@ const Transactions = () => {
                 }
             } catch (err) {
                 console.log(err);
-                generateerror("No Transaction data Available!!");
+                generateerror("Internal Server Error");
             }
         }
         func();

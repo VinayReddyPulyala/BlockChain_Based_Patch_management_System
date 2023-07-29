@@ -4,6 +4,8 @@ import AccountContext from '../AccountContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { OverlayTrigger, Popover } from 'react-bootstrap';
+
 function Adminreq() {
     let { contract } = useContext(context);
     let { Account } = useContext(AccountContext);
@@ -12,12 +14,24 @@ function Adminreq() {
     let [features, setFeatures] = useState([]);
     let [bugindex, setbind] = useState([]);
     let [featureindex, setfid] = useState([]);
+    let [name, setname] = useState("");
+    let [desc, setdesc] = useState("");
+
     let Navigate = useNavigate();
 
     useEffect(() => {
         console.log(contract);
         console.log(Account);
     }, [contract]);
+
+    let PopoverContent = (
+        <Popover id="popover-basic">
+            <Popover.Header as="h4">{name}</Popover.Header>
+            <Popover.Body>{desc}</Popover.Body>
+        </Popover>
+    );
+
+
     let handlesoftchange = async (event) => {
         setSoftware(event.target.value);
         let { 0: bgs, 1: ftrs } = await contract.methods.labeller(event.target.value).call();
@@ -51,15 +65,18 @@ function Adminreq() {
 
     async function handlerequest() {
         let bugind = [];
-        for (let i = 0; i < bugindex.length; i++) {
-            if (document.getElementById("bug-" + bugindex[i]).checked) {
-                bugind.push(bugindex[i]);
+        let bugidx = Array.from(new Set(bugindex));
+        let featureidx = Array.from(new Set(featureindex));
+        console.log(bugidx,featureidx);
+        for (let i = 0; i < bugidx.length; i++) {
+            if (document.getElementById("bug-" + bugidx[i]).checked) {
+                bugind.push(bugidx[i]);
             }
         }
         let featureind = [];
-        for (let i = 0; i < featureindex.length; i++) {
-            if (document.getElementById("feature-" + featureindex[i]).checked) {
-                featureind.push(featureindex[i]);
+        for (let i = 0; i < featureidx.length; i++) {
+            if (document.getElementById("feature-" + featureidx[i]).checked) {
+                featureind.push(featureidx[i]);
             };
         };
         console.log(bugind, featureind);
@@ -139,9 +156,9 @@ function Adminreq() {
                         <h3>
                             Bugs
                         </h3>
-                        <div id="bugs" className="col-lg border border-secondary m-1 p-3 mb-2 overflow-y-auto" style={{height:"300px"}}>
+                        <div id="bugs" className="col-lg border border-secondary m-1 p-3 mb-2 overflow-y-auto" style={{ height: "300px" }}>
                             {(() => {
-                                if (bugs.length == 0) {
+                                if (bugs.length === 0) {
                                     return (
                                         <div>
                                             No Data Available.....
@@ -169,13 +186,18 @@ function Adminreq() {
                                                                     <input type="checkbox" id={"bug-" + ind} />
                                                                 </td>
                                                                 <td>
-                                                                    {val.bugname}
-                                                                    <span title={val.bugdesc}>
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" className="bi bi-info-circle ms-2" viewBox="0 0 16 16" >
-                                                                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                                                                            <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
-                                                                        </svg>
-                                                                    </span>
+                                                                    <OverlayTrigger trigger="click" placement="right" overlay={PopoverContent} rootClose={true} >
+                                                                        <span style={{ cursor: 'pointer' }} onClick={() => {
+                                                                            setname(val.bugname);
+                                                                            setdesc(val.bugdesc);
+                                                                        }}>
+                                                                            {val.bugname}{' '}
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" className="bi bi-info-circle ms-2" viewBox="0 0 16 16" >
+                                                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                                                                <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </OverlayTrigger>
                                                                 </td>
                                                                 <td>{val.priority}</td>
                                                             </tr>
@@ -193,7 +215,7 @@ function Adminreq() {
                         <h3>
                             Features
                         </h3>
-                        <div id="features" className="col-lg border border-secondary m-1 p-3 mb-2 overflow-y-auto" style={{height:"300px"}}>
+                        <div id="features" className="col-lg border border-secondary m-1 p-3 mb-2 overflow-y-auto" style={{ height: "300px" }}>
                             {(() => {
                                 if (features.length == 0) {
                                     return (
@@ -222,13 +244,18 @@ function Adminreq() {
                                                                     <input type="checkbox" id={"feature-" + ind} />
                                                                 </td>
                                                                 <td>
-                                                                    {val.featurename}
-                                                                    <span title={val.featuredesc}>
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" className="bi bi-info-circle ms-2" viewBox="0 0 16 16" >
-                                                                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                                                                            <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
-                                                                        </svg>
-                                                                    </span>
+                                                                    <OverlayTrigger trigger="click" placement="right" overlay={PopoverContent} rootClose={true} >
+                                                                        <span style={{ cursor: 'pointer' }} onClick={() => {
+                                                                            setname(val.featurename);
+                                                                            setdesc(val.featuredesc);
+                                                                        }}>
+                                                                            {val.featurename}{' '}
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" className="bi bi-info-circle ms-2" viewBox="0 0 16 16" >
+                                                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                                                                <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </OverlayTrigger>
                                                                 </td>
                                                                 <td>{val.priority}</td>
                                                             </tr>

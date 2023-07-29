@@ -608,8 +608,7 @@ async function set() {
             "type": "function"
         }
     ]
-    // let address = "0xc9b840e002fd310e1458736E57BF6563e3E79406";
-    let address = "0x1711757d7329A4997a2ad3D829aaC85917351719";
+    let address = "0x9E6ec59e00Dc425F01C31Cb5CEB140aE672b3988";
     let contractobj = new web3.eth.Contract(abi, address);
     root.render(
         <context.Provider value={{ contract: contractobj }}>

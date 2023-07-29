@@ -41,6 +41,10 @@ const Addreport = () => {
     }
 
     let upload = async (e) => {
+        if(software===""){
+            generateerror("Please select the software");
+            return ;
+        }
         e.preventDefault();
         let bugs = [];
         let features = [];
@@ -50,7 +54,7 @@ const Addreport = () => {
             obj["status"] = "unresolved";
             obj["priority"] = document.getElementById("bugpriority" + i).value;
             obj["bugdesc"] = document.getElementById("bugDescription" + i).value;
-            if(obj["bugdesc"] == "" || obj["bugname"] == "" || obj["priority"==""] || obj["status"]==""){
+            if(obj["bugdesc"] === "" || obj["bugname"] === "" || obj["priority"===""] || obj["status"]===""){
                 generateerror("Please fill the form completely");
                 return ;
             }
@@ -62,7 +66,7 @@ const Addreport = () => {
             obj["status"] = "unresolved";
             obj["priority"] = document.getElementById("featurepriority" + i).value;
             obj["featuredesc"] = document.getElementById("featureDescription" + i).value;
-            if(obj["featuredesc"] == "" || obj["featurename"] == "" || obj["priority"==""] || obj["status"]==""){
+            if(obj["featuredesc"] === "" || obj["featurename"] === "" || obj["priority"===""] || obj["status"]===""){
                 generateerror("Please fill the form completely");
                 return ;
             }
@@ -207,7 +211,7 @@ const Addreport = () => {
                             <div className="row mb-3">
                                 <label className="col-sm-4 form-label" htmlFor="bugpriority1">Priority</label>
                                 <div className="col-sm col-sm-3 col-lg-5">
-                                    <select className="form-select" id="bugpriority1" required>
+                                    <select className="form-select" id="bugpriority1" defaultValue="0" required>
                                         <option value="0" disabled>NA</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
@@ -243,7 +247,7 @@ const Addreport = () => {
                             <div className="row mb-3">
                                 <label className="col-sm-4 form-label" htmlFor="featurepriority1">Priority</label>
                                 <div className="col-sm col-sm-3 col-lg-5">
-                                    <select className="form-select" id="featurepriority1" required>
+                                    <select className="form-select" id="featurepriority1" defaultValue="0"  required>
                                         <option value="0" disabled>NA</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
